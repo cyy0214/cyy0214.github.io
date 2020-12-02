@@ -1,0 +1,255 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>【特征提取+分类模型】4种常见的NLP实践思路 | CYYcosmos</title><meta name="keywords" content="Python,NLP"><meta name="author" content="Yanyu Chen"><meta name="copyright" content="Yanyu Chen"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="越来越多的人选择参加算法赛事，为了提升项目实践能力，同时也希望能拿到好的成绩增加履历的丰富度。期望如此美好，现实却是：看完赛题，一点思路都木有。那么，当我们拿到一个算法赛题后，如何破题，如何找到可能的解题思路呢。 本文针对NLP项目给出了4种常见的解题思路，其中包含1种基于机器学习的思路和3种基于深度学习的思路。 @TOC 一、数据及背景https:&#x2F;&#x2F;tianchi.aliyun.com&#x2F;com">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【特征提取+分类模型】4种常见的NLP实践思路">
+<meta property="og:url" content="http://cyy0214.github.io/2020/07/28/%E3%80%90%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96+%E5%88%86%E7%B1%BB%E6%A8%A1%E5%9E%8B%E3%80%914%E7%A7%8D%E5%B8%B8%E8%A7%81%E7%9A%84NLP%E5%AE%9E%E8%B7%B5%E6%80%9D%E8%B7%AF/index.html">
+<meta property="og:site_name" content="CYYcosmos">
+<meta property="og:description" content="越来越多的人选择参加算法赛事，为了提升项目实践能力，同时也希望能拿到好的成绩增加履历的丰富度。期望如此美好，现实却是：看完赛题，一点思路都木有。那么，当我们拿到一个算法赛题后，如何破题，如何找到可能的解题思路呢。 本文针对NLP项目给出了4种常见的解题思路，其中包含1种基于机器学习的思路和3种基于深度学习的思路。 @TOC 一、数据及背景https:&#x2F;&#x2F;tianchi.aliyun.com&#x2F;com">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
+<meta property="article:published_time" content="2020-07-28T11:16:19.000Z">
+<meta property="article:modified_time" content="2020-12-02T16:10:16.356Z">
+<meta property="article:author" content="Yanyu Chen">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="NLP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"><link rel="shortcut icon" href="/img/3.jpg"><link rel="canonical" href="http://cyy0214.github.io/2020/07/28/%E3%80%90%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96+%E5%88%86%E7%B1%BB%E6%A8%A1%E5%9E%8B%E3%80%914%E7%A7%8D%E5%B8%B8%E8%A7%81%E7%9A%84NLP%E5%AE%9E%E8%B7%B5%E6%80%9D%E8%B7%AF/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"We didn't find any results for the search: ${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  ClickShowText: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2020-12-03 00:10:16'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}})()</script><meta name="generator" content="Hexo 5.2.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">Loading...</div></div></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/img/3.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">3</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">3</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">2</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/5.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">CYYcosmos</a></span><span id="menus"><div id="search_button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> Search</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><h1 class="post-title">【特征提取+分类模型】4种常见的NLP实践思路</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2020-07-28T11:16:19.000Z" title="Created 2020-07-28 19:16:19">2020-07-28</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2020-12-02T16:10:16.356Z" title="Updated 2020-12-03 00:10:16">2020-12-03</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E3%80%90NLP%E3%80%91/">【NLP】</a></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>越来越多的人选择参加算法赛事，为了提升项目实践能力，同时也希望能拿到好的成绩增加履历的丰富度。期望如此美好，现实却是：看完赛题，一点思路都木有。那么，当我们拿到一个算法赛题后，如何破题，如何找到可能的解题思路呢。</p>
+<p>本文针对NLP项目给出了4种常见的解题思路，其中包含1种基于机器学习的思路和3种基于深度学习的思路。</p>
+<p>@<a href="">TOC</a></p>
+<h1 id="一、数据及背景"><a href="#一、数据及背景" class="headerlink" title="一、数据及背景"></a><strong>一、数据及背景</strong></h1><p><a target="_blank" rel="noopener" href="https://tianchi.aliyun.com/competition/entrance/531810/information%EF%BC%88%E9%98%BF%E9%87%8C%E5%A4%A9%E6%B1%A0-%E9%9B%B6%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8NLP%E8%B5%9B%E4%BA%8B%EF%BC%89">https://tianchi.aliyun.com/competition/entrance/531810/information（阿里天池-零基础入门NLP赛事）</a></p>
+<h1 id="二、数据下载及分析"><a href="#二、数据下载及分析" class="headerlink" title="二、数据下载及分析"></a><strong>二、数据下载及分析</strong></h1><h2 id="2-1-获取数据"><a href="#2-1-获取数据" class="headerlink" title="2.1 获取数据"></a>2.1 <strong>获取数据</strong></h2><p>我们直接打开数据下载地址，看到的是这样一个页面：</p>
+<p><img src="C:\Users\Melody\AppData\Roaming\Typora\typora-user-images\image-20201202235506095.png" alt="image-20201202235506095"></p>
+<p>接着三步走：注册报名下载数据，查看数据前五行可以看到我们获得的数据如下：</p>
+<img src="C:\Users\Melody\AppData\Roaming\Typora\typora-user-images\image-20201202235609005.png" alt="image-20201202235609005" style="zoom:67%;" />
+
+<p>其中左边的label是数据集文本对应的标签，而右边的text则是编码后的文本，文本对应的标签列举如下：</p>
+<img src="C:\Users\Melody\AppData\Roaming\Typora\typora-user-images\image-20201202235628404.png" alt="image-20201202235628404" style="zoom: 50%;" />
+
+<p>根据官方描述：赛题以匿名处理后的新闻数据为赛题数据，数据集报名后可见并可下载。赛题数据为新闻文本，并按照字符级别进行匿名处理。整合划分出14个候选分类类别：财经、彩票、房产、股票、家居、教育、科技、社会、时尚、时政、体育、星座、游戏、娱乐的文本数据。</p>
+<p>赛题数据由以下几个部分构成：训练集20w条样本，测试集A包括5w条样本，测试集B包括5w条样本。为了预防选手人工标注测试集的情况，我们将比赛数据的文本按照字符级别进行了匿名处理。</p>
+<p>同时我们还应该注意到官网有给出结果评价指标，我们也需要根据这个评价指标衡量我们的验证集数据误差：</p>
+<p><img src="C:\Users\Melody\AppData\Roaming\Typora\typora-user-images\image-20201202235654877.png" alt="image-20201202235654877"></p>
+<p>既然该拿到的我们都拿到了，我们接下来就开始构思我们都应该使用哪些思路来完成我们的预测。</p>
+<h2 id="2-2-常见思路"><a href="#2-2-常见思路" class="headerlink" title="2.2 常见思路"></a><strong>2.2 常见思路</strong></h2><p>赛题本质是一个文本分类问题，需要根据每句的字符进行分类。但赛题给出的数据是匿名化的，不能直接使用中文分词等操作，这个是赛题的难点。</p>
+<p>因此本次赛题的难点是需要对匿名字符进行建模，进而完成文本分类的过程。由于文本数据是一种典型的非结构化数据，因此可能涉及到**<code>特征提取</code><strong>和</strong><code>分类模型</code>**两个部分。为了减低参赛难度，我们提供了一些解题思路供大家参考：</p>
+<ul>
+<li><strong>思路1</strong>：TF-IDF + 机器学习分类器：直接使用TF-IDF对文本提取特征，并使用分类器进行分类。在分类器的选择上，可以使用SVM、LR、或者XGBoost。</li>
+<li><strong>思路2</strong>：FastText：FastText是入门款的词向量，利用Facebook提供的FastText工具，可以快速构建出分类器。</li>
+<li><strong>思路3</strong>：WordVec + 深度学习分类器：WordVec是进阶款的词向量，并通过构建深度学习分类完成分类。深度学习分类的网络结构可以选择TextCNN、TextRNN或者BiLSTM。</li>
+<li><strong>思路4</strong>：Bert词向量：Bert是高配款的词向量，具有强大的建模学习能力。</li>
+</ul>
+<h1 id="三、基于机器学习的文本分类"><a href="#三、基于机器学习的文本分类" class="headerlink" title="三、基于机器学习的文本分类"></a><strong>三、基于机器学习的文本分类</strong></h1><h2 id="3-1-TF-IDF-机器学习分类器-思路1"><a href="#3-1-TF-IDF-机器学习分类器-思路1" class="headerlink" title="3.1 TF-IDF+机器学习分类器(思路1)"></a><strong>3.1 TF-IDF+机器学习分类器(思路1)</strong></h2><h4 id="3-1-1-什么是TF-IDF？"><a href="#3-1-1-什么是TF-IDF？" class="headerlink" title="3.1.1. 什么是TF-IDF？"></a><strong>3.1.1. 什么是TF-IDF？</strong></h4><p>TF-IDF(term frequency–inverse document frequency)是一种用于信息检索与数据挖掘的常用加权技术，常用于挖掘文章中的关键词，而且算法简单高效，常被工业用于最开始的文本数据清洗。</p>
+<p>TF-IDF有两层意思，一层是”词频”（Term Frequency，缩写为TF），另一层是”逆文档频率”（Inverse Document Frequency，缩写为IDF）。</p>
+<p>当有TF(词频)和IDF(逆文档频率)后，将这两个词相乘，就能得到一个词的TF-IDF的值。某个词在文章中的TF-IDF越大，那么一般而言这个词在这篇文章的重要性会越高，所以通过计算文章中各个词的TF-IDF，由大到小排序，排在最前面的几个词，就是该文章的关键词。</p>
+<h4 id="3-2-2-TF-IDF算法步骤"><a href="#3-2-2-TF-IDF算法步骤" class="headerlink" title="3.2.2. TF-IDF算法步骤"></a><strong>3.2.2. TF-IDF算法步骤</strong></h4><p><strong>第一步</strong>，计算词频：</p>
+<img src="C:\Users\Melody\AppData\Roaming\Typora\typora-user-images\image-20201202235831618.png" alt="image-20201202235831618" style="zoom:50%;" />
+
+<p>考虑到文章有长短之分，为了便于不同文章的比较，进行”词频”标准化:</p>
+<img src="C:\Users\Melody\AppData\Roaming\Typora\typora-user-images\image-20201202235847123.png" alt="image-20201202235847123" style="zoom: 50%;" />
+
+<p><strong>第二步</strong>，计算逆文档频率：</p>
+<p>这时，需要一个语料库（corpus），用来模拟语言的使用环境。</p>
+<img src="C:\Users\Melody\AppData\Roaming\Typora\typora-user-images\image-20201202235904403.png" alt="image-20201202235904403" style="zoom:50%;" />
+
+<p>如果一个词越常见，那么分母就越大，逆文档频率就越小越接近0。分母之所以要加1，是为了避免分母为0（即所有文档都不包含该词）。log表示对得到的值取对数。</p>
+<p><strong>第三步</strong>，计算TF-IDF：</p>
+<img src="https://mmbiz.qpic.cn/mmbiz_png/vI9nYe94fsHl2PYInTor9uj1UkVTPP4qvibj0FmA3M3IWFRTsQmco54gwYspPo7a4SmSkr9TSkk1TEbPzMysBOQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="img" style="zoom:50%;" />
+
+<p>可以看到，TF-IDF与一个词在文档中的出现次数成正比，与该词在整个语言中的出现次数成反比。所以，自动提取关键词的算法就很清楚了，就是计算出文档的每个词的TF-IDF值，然后按降序排列，取排在最前面的几个词。</p>
+<h4 id="3-3-3-优缺点"><a href="#3-3-3-优缺点" class="headerlink" title="3.3.3. 优缺点"></a><strong>3.3.3. 优缺点</strong></h4><p>TF-IDF的优点是简单快速，而且容易理解。缺点是有时候用词频来衡量文章中的一个词的重要性不够全面，有时候重要的词出现的可能不够多，而且这种计算无法体现位置信息，无法体现词在上下文的重要性。如果要体现词的上下文结构，那么你可能需要使用word2vec算法来支持。</p>
+<h1 id="四、基于深度学习的文本分类"><a href="#四、基于深度学习的文本分类" class="headerlink" title="四、基于深度学习的文本分类"></a>四、基于深度学习的文本分类</h1><h2 id="4-1-FastText-思路2"><a href="#4-1-FastText-思路2" class="headerlink" title="4.1 FastText(思路2)"></a><strong>4.1 FastText(思路2)</strong></h2><h4 id="4-1-1-FastText的核心思想"><a href="#4-1-1-FastText的核心思想" class="headerlink" title="4.1.1 FastText的核心思想"></a><strong>4.1.1 FastText的核心思想</strong></h4><p>将整篇文档的词及n-gram向量叠加平均得到文档向量，然后使用文档向量做softmax多分类。这中间涉及到两个技巧：字符级N-gram特征的引入以及分层Softmax分类。</p>
+<h4 id="4-1-2-字符级N-gram特征"><a href="#4-1-2-字符级N-gram特征" class="headerlink" title="4.1.2 字符级N-gram特征"></a><strong>4.1.2 字符级N-gram特征</strong></h4><p>N-gram是基于语言模型的算法，基本思想是将文本内容按照子节顺序进行大小为N的窗口滑动操作，最终形成窗口为N的字节片段序列。举个例子：</p>
+<blockquote>
+<p>我来到达观数据参观</p>
+</blockquote>
+<blockquote>
+<p>相应的bigram特征为：我来 来到 到达 达观 观数 数据 据参 参观</p>
+</blockquote>
+<blockquote>
+<p>相应的trigram特征为：我来到 来到达 到达观 达观数 观数据 数据参 据参观</p>
+</blockquote>
+<p>注意一点：n-gram中的gram根据粒度不同，有不同的含义。它可以是字粒度，也可以是词粒度的。上面所举的例子属于字粒度的n-gram，词粒度的n-gram看下面例子：</p>
+<blockquote>
+<p>我 来到 达观数据 参观</p>
+</blockquote>
+<blockquote>
+<p>相应的bigram特征为：我/来到 来到/达观数据 达观数据/参观</p>
+</blockquote>
+<blockquote>
+<p>相应的trigram特征为：我/来到/达观数据 来到/达观数据/参观</p>
+</blockquote>
+<p>n-gram产生的特征只是作为文本特征的候选集，你后面可能会采用信息熵、卡方统计、IDF等文本特征选择方式筛选出比较重要特征。</p>
+<h4 id="4-1-3-分层Softmax分类"><a href="#4-1-3-分层Softmax分类" class="headerlink" title="4.1.3 分层Softmax分类"></a><strong>4.1.3 分层Softmax分类</strong></h4><p>softmax函数常在神经网络输出层充当激活函数，目的就是将输出层的值归一化到0-1区间，将神经元输出构造成概率分布，主要就是起到将神经元输出值进行归一化的作用。</p>
+<p>下图是一个分层Softmax示例：</p>
+<img src="C:\Users\Melody\AppData\Roaming\Typora\typora-user-images\image-20201203000728656.png" alt="image-20201203000728656" style="zoom:67%;" />
+
+<p>通过分层的Softmax，计算复杂度一下从|K|降低到log|K|。</p>
+<h2 id="4-2-Word2Vec-深度学习分类器（思路3）"><a href="#4-2-Word2Vec-深度学习分类器（思路3）" class="headerlink" title="4.2 Word2Vec+深度学习分类器（思路3）"></a><strong>4.2 Word2Vec+深度学习分类器（思路3）</strong></h2><h4 id="4-2-1-Word2Vec"><a href="#4-2-1-Word2Vec" class="headerlink" title="4.2.1 Word2Vec"></a><strong>4.2.1 Word2Vec</strong></h4><p>Word2vec，是一群用来产生词向量的相关模型。这些模型为浅而双层的神经网络，用来训练以重新建构语言学之词文本。网络以词表现，并且需猜测相邻位置的输入词，在word2vec中词袋模型假设下，词的顺序是不重要的。训练完成之后，word2vec模型可用来映射每个词到一个向量，可用来表示词对词之间的关系，该向量为神经网络之隐藏层。【百度百科】</p>
+<p>Word2vec 是 Word Embedding 的方法之一。他是 2013 年由谷歌的 Mikolov 提出了一套新的词嵌入方法。</p>
+<h4 id="4-2-2-优化方法"><a href="#4-2-2-优化方法" class="headerlink" title="4.2.2 优化方法"></a><strong>4.2.2 优化方法</strong></h4><p>为了提高速度，Word2vec 经常采用 2 种加速方式：</p>
+<ul>
+<li>Negative Sample（负采样）</li>
+<li>Hierarchical Softmax</li>
+</ul>
+<h4 id="4-2-3-优缺点"><a href="#4-2-3-优缺点" class="headerlink" title="4.2.3 优缺点"></a><strong>4.2.3 优缺点</strong></h4><p><strong>优点：</strong></p>
+<ul>
+<li>由于 Word2vec 会考虑上下文，跟之前的 Embedding 方法相比，效果要更好（但不如 18 年之后的方法）</li>
+<li>比之前的 Embedding方 法维度更少，所以速度更快</li>
+<li>通用性很强，可以用在各种 NLP 任务中</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>由于词和向量是一对一的关系，所以多义词的问题无法解决。</li>
+<li>Word2vec 是一种静态的方式，虽然通用性强，但是无法针对特定任务做动态优化</li>
+</ul>
+<h2 id="4-3-Bert词向量-思路4"><a href="#4-3-Bert词向量-思路4" class="headerlink" title="4.3 Bert词向量(思路4)"></a><strong>4.3 Bert词向量(思路4)</strong></h2><p>BERT（Bidirectional Encoder Representations from Transformers）词向量模型，2018年10月在《BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding》这篇论文中被Google提出，在11种不同nlp测试中创出最佳成绩，包括将glue基准推至80.4%（绝对改进7.6%），multinli准确度达到86.7% （绝对改进率5.6%）等。</p>
+<h4 id="4-1-1-特征"><a href="#4-1-1-特征" class="headerlink" title="4.1.1 特征"></a><strong>4.1.1 特征</strong></h4><p>1、通过联合调节所有层中的左右上下文来预训练深度双向表示</p>
+<p>2、the first fine-tuning based representation model that achieves state-of-the-art performance on a large suite of sentence-level and token-level tasks, outperforming many systems with task-specific architectures</p>
+<p>3、所需计算量非常大。Jacob 说：「OpenAI 的 Transformer 有 12 层、768 个隐藏单元，他们使用 8 块 P100 在 8 亿词量的数据集上训练 40 个 Epoch 需要一个月，而 BERT-Large 模型有 24 层、2014 个隐藏单元，它们在有 33 亿词量的数据集上需要训练 40 个 Epoch，因此在 8 块 P100 上可能需要 1 年？16 Cloud TPU 已经是非常大的计算力了。</p>
+<p>4、预训练的BERT表示可以通过一个额外的输出层进行微调，适用于广泛任务的state-of-the-art模型的构建，比如问答任务和语言推理，无需针对具体任务做大幅架构修改。</p>
+<p>5、一词多义问题</p>
+<h1 id="五、学习和实践路径参考资料"><a href="#五、学习和实践路径参考资料" class="headerlink" title="五、学习和实践路径参考资料"></a>五、学习和实践路径参考资料</h1><p>1、复旦大学邱锡鹏组实验室新生一般完成的五个NLP练习上手实验（NLP四大类任务：分类、序列标注、文本匹配、文本生成，都需要完整实现一遍）。<br><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/324189960/answer/682130580?utm_source=wechat_session&amp;utm_medium=social&amp;utm_oi=952466020582064128">https://www.zhihu.com/question/324189960/answer/682130580?utm_source=wechat_session&amp;utm_medium=social&amp;utm_oi=952466020582064128</a><br>2自动化所宗成庆研究员：读懂NLP的过去与现在（梳理的非常好，把各个概念之间的关系和NLP的发展都梳理清楚了）<br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/xgySwq2m-mHT7XG1zZGpzw">https://mp.weixin.qq.com/s/xgySwq2m-mHT7XG1zZGpzw</a><br>3、中文自然语言处理入门实战<br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/5z7Xy4NL-buUkpBmv4iIpw">https://mp.weixin.qq.com/s/5z7Xy4NL-buUkpBmv4iIpw</a><br>4、自然语言处理全家福：纵览当前NLP中的任务、数据、模型与论文<br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/sQ903WNSR4v367t78_VG1Q">https://mp.weixin.qq.com/s/sQ903WNSR4v367t78_VG1Q</a><br>5、中文信息处理发展报告（综述由中文信息学会统筹，国内各大NLP专家撰写，非常适合入门了解NLP）<br><a target="_blank" rel="noopener" href="http://cips-upload.bj.bcebos.com/cips2016.pdf">http://cips-upload.bj.bcebos.com/cips2016.pdf</a><br>6、Jumping NLP Curves: A Review of Natural Language Processing Research [Review Article]<br><a target="_blank" rel="noopener" href="https://ieeexplore.ieee.org/document/6786458">https://ieeexplore.ieee.org/document/6786458</a><br>7、Natural Language Processing: A Review<br><a target="_blank" rel="noopener" href="https://www.researchgate.net/publication/309210149_Natural_Language_Processing_A_Review">https://www.researchgate.net/publication/309210149_Natural_Language_Processing_A_Review</a><br>8、A Review of the Neural History of Natural Language Processing<br><a target="_blank" rel="noopener" href="http://ruder.io/a-review-of-the-recent-history-of-nlp/">http://ruder.io/a-review-of-the-recent-history-of-nlp/</a><br>9、邓力和刘洋大神合著的图书《Deep Learning in Natural Language Processing》<br>10、宗成庆研究员所著《统计自然语言处理》（经典之作）<br>11、Steven Bird所著《Python自然语言处理》（快速掌握python开发nlp技术的各种能力）<br>12、机器学习 → 推荐周志华教授所著的《机器学习》<br>13、深度学习 → 推荐Ian Goodfellow等人合著的《Deep Learning》<br>14、开发框架 → 首推Pytorch，推荐陈云的《深度学习框架Pytorch入门与实践》或者廖星宇的《深度学习入门之Pytorch》<br>15、Tensorflow学习 → 推荐黄文坚、唐源的《Tensorflow实战》</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">Yanyu Chen</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://cyy0214.github.io/2020/07/28/%E3%80%90%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96+%E5%88%86%E7%B1%BB%E6%A8%A1%E5%9E%8B%E3%80%914%E7%A7%8D%E5%B8%B8%E8%A7%81%E7%9A%84NLP%E5%AE%9E%E8%B7%B5%E6%80%9D%E8%B7%AF/">http://cyy0214.github.io/2020/07/28/%E3%80%90%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96+%E5%88%86%E7%B1%BB%E6%A8%A1%E5%9E%8B%E3%80%914%E7%A7%8D%E5%B8%B8%E8%A7%81%E7%9A%84NLP%E5%AE%9E%E8%B7%B5%E6%80%9D%E8%B7%AF/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Python/">Python</a><a class="post-meta__tags" href="/tags/NLP/">NLP</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-full"><a href="/2020/12/02/Leetcode%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0/"><img class="prev-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">Leetcode148</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2020/12/02/Leetcode刷题笔记/" title="Leetcode148"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-12-02</div><div class="title">Leetcode148</div></div></a></div></div></div></div><div class="aside_content" id="aside_content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-avatar is-center"><img class="avatar-img" src="/img/3.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Yanyu Chen</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">3</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">3</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">2</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/cyy0214"><i class="fab fa-github"></i><span>Follow Me</span></a></div></div><div class="card-widget card-announcement"><div class="card-content"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>Announcement</span></div><div class="announcement_content">If you have any problem, please feel free to contact with me.,E-mail：yanyu_chen_98@163.com</div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="card-content"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%95%B0%E6%8D%AE%E5%8F%8A%E8%83%8C%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">一、数据及背景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%95%B0%E6%8D%AE%E4%B8%8B%E8%BD%BD%E5%8F%8A%E5%88%86%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text">二、数据下载及分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-%E8%8E%B7%E5%8F%96%E6%95%B0%E6%8D%AE"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 获取数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-%E5%B8%B8%E8%A7%81%E6%80%9D%E8%B7%AF"><span class="toc-number">2.2.</span> <span class="toc-text">2.2 常见思路</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%9F%BA%E4%BA%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%96%87%E6%9C%AC%E5%88%86%E7%B1%BB"><span class="toc-number">3.</span> <span class="toc-text">三、基于机器学习的文本分类</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-TF-IDF-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%88%86%E7%B1%BB%E5%99%A8-%E6%80%9D%E8%B7%AF1"><span class="toc-number">3.1.</span> <span class="toc-text">3.1 TF-IDF+机器学习分类器(思路1)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1-1-%E4%BB%80%E4%B9%88%E6%98%AFTF-IDF%EF%BC%9F"><span class="toc-number">3.1.0.1.</span> <span class="toc-text">3.1.1. 什么是TF-IDF？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-2-TF-IDF%E7%AE%97%E6%B3%95%E6%AD%A5%E9%AA%A4"><span class="toc-number">3.1.0.2.</span> <span class="toc-text">3.2.2. TF-IDF算法步骤</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-3-%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-number">3.1.0.3.</span> <span class="toc-text">3.3.3. 优缺点</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E5%9F%BA%E4%BA%8E%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%96%87%E6%9C%AC%E5%88%86%E7%B1%BB"><span class="toc-number">4.</span> <span class="toc-text">四、基于深度学习的文本分类</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#4-1-FastText-%E6%80%9D%E8%B7%AF2"><span class="toc-number">4.1.</span> <span class="toc-text">4.1 FastText(思路2)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-1-FastText%E7%9A%84%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3"><span class="toc-number">4.1.0.1.</span> <span class="toc-text">4.1.1 FastText的核心思想</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-2-%E5%AD%97%E7%AC%A6%E7%BA%A7N-gram%E7%89%B9%E5%BE%81"><span class="toc-number">4.1.0.2.</span> <span class="toc-text">4.1.2 字符级N-gram特征</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-3-%E5%88%86%E5%B1%82Softmax%E5%88%86%E7%B1%BB"><span class="toc-number">4.1.0.3.</span> <span class="toc-text">4.1.3 分层Softmax分类</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-2-Word2Vec-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%88%86%E7%B1%BB%E5%99%A8%EF%BC%88%E6%80%9D%E8%B7%AF3%EF%BC%89"><span class="toc-number">4.2.</span> <span class="toc-text">4.2 Word2Vec+深度学习分类器（思路3）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-1-Word2Vec"><span class="toc-number">4.2.0.1.</span> <span class="toc-text">4.2.1 Word2Vec</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-2-%E4%BC%98%E5%8C%96%E6%96%B9%E6%B3%95"><span class="toc-number">4.2.0.2.</span> <span class="toc-text">4.2.2 优化方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-3-%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-number">4.2.0.3.</span> <span class="toc-text">4.2.3 优缺点</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-3-Bert%E8%AF%8D%E5%90%91%E9%87%8F-%E6%80%9D%E8%B7%AF4"><span class="toc-number">4.3.</span> <span class="toc-text">4.3 Bert词向量(思路4)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-1-%E7%89%B9%E5%BE%81"><span class="toc-number">4.3.0.1.</span> <span class="toc-text">4.1.1 特征</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E5%AD%A6%E4%B9%A0%E5%92%8C%E5%AE%9E%E8%B7%B5%E8%B7%AF%E5%BE%84%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-number">5.</span> <span class="toc-text">五、学习和实践路径参考资料</span></a></li></ol></div></div></div><div class="card-widget card-recent-post"><div class="card-content"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2020/12/02/Leetcode44/" title="Leetcode44"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Leetcode44"/></a><div class="content"><a class="title" href="/2020/12/02/Leetcode44/" title="Leetcode44">Leetcode44</a><time datetime="2020-12-02T11:16:19.000Z" title="Created 2020-12-02 19:16:19">2020-12-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/12/02/Leetcode%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0/" title="Leetcode148"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Leetcode148"/></a><div class="content"><a class="title" href="/2020/12/02/Leetcode%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0/" title="Leetcode148">Leetcode148</a><time datetime="2020-12-01T16:00:00.000Z" title="Created 2020-12-02 00:00:00">2020-12-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/07/28/%E3%80%90%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96+%E5%88%86%E7%B1%BB%E6%A8%A1%E5%9E%8B%E3%80%914%E7%A7%8D%E5%B8%B8%E8%A7%81%E7%9A%84NLP%E5%AE%9E%E8%B7%B5%E6%80%9D%E8%B7%AF/" title="【特征提取+分类模型】4种常见的NLP实践思路"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="【特征提取+分类模型】4种常见的NLP实践思路"/></a><div class="content"><a class="title" href="/2020/07/28/%E3%80%90%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96+%E5%88%86%E7%B1%BB%E6%A8%A1%E5%9E%8B%E3%80%914%E7%A7%8D%E5%B8%B8%E8%A7%81%E7%9A%84NLP%E5%AE%9E%E8%B7%B5%E6%80%9D%E8%B7%AF/" title="【特征提取+分类模型】4种常见的NLP实践思路">【特征提取+分类模型】4种常见的NLP实践思路</a><time datetime="2020-07-28T11:16:19.000Z" title="Created 2020-07-28 19:16:19">2020-07-28</time></div></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/5.jpg)"><div id="footer-wrap"><div class="copyright">&copy;2020 By Yanyu Chen</div><div class="footer_custom_text">Welcome to my blog~</div><div class="icp"><a><img class="icp-icon" src="/img/icp.png" alt="ICP"/><span></span></a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">Local search</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="Search for Posts" type="text"/></div></div></div><hr/><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>Powered by</span> <a target="_blank" rel="noopener" href="https://github.com/wzpan/hexo-generator-search" style="color:#49B1F5;">hexo-generator-search</a></div></div></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',()=> {preloader.endLoading()})</script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div></body></html>

@@ -1,24 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Hello World</title>
-    <url>/2020/12/01/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-]]></content>
-  </entry>
-  <entry>
     <title>Leetcode148</title>
     <url>/2020/12/02/Leetcode%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0/</url>
     <content><![CDATA[]]></content>
@@ -34,5 +16,113 @@
     <title>Leetcode44</title>
     <url>/2020/12/02/Leetcode44/</url>
     <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>【特征提取+分类模型】4种常见的NLP实践思路</title>
+    <url>/2020/07/28/%E3%80%90%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96+%E5%88%86%E7%B1%BB%E6%A8%A1%E5%9E%8B%E3%80%914%E7%A7%8D%E5%B8%B8%E8%A7%81%E7%9A%84NLP%E5%AE%9E%E8%B7%B5%E6%80%9D%E8%B7%AF/</url>
+    <content><![CDATA[<p>越来越多的人选择参加算法赛事，为了提升项目实践能力，同时也希望能拿到好的成绩增加履历的丰富度。期望如此美好，现实却是：看完赛题，一点思路都木有。那么，当我们拿到一个算法赛题后，如何破题，如何找到可能的解题思路呢。</p>
+<p>本文针对NLP项目给出了4种常见的解题思路，其中包含1种基于机器学习的思路和3种基于深度学习的思路。</p>
+<p>@<a href="">TOC</a></p>
+<h1 id="一、数据及背景"><a href="#一、数据及背景" class="headerlink" title="一、数据及背景"></a><strong>一、数据及背景</strong></h1><p><a href="https://tianchi.aliyun.com/competition/entrance/531810/information%EF%BC%88%E9%98%BF%E9%87%8C%E5%A4%A9%E6%B1%A0-%E9%9B%B6%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8NLP%E8%B5%9B%E4%BA%8B%EF%BC%89">https://tianchi.aliyun.com/competition/entrance/531810/information（阿里天池-零基础入门NLP赛事）</a></p>
+<h1 id="二、数据下载及分析"><a href="#二、数据下载及分析" class="headerlink" title="二、数据下载及分析"></a><strong>二、数据下载及分析</strong></h1><h2 id="2-1-获取数据"><a href="#2-1-获取数据" class="headerlink" title="2.1 获取数据"></a>2.1 <strong>获取数据</strong></h2><p>我们直接打开数据下载地址，看到的是这样一个页面：</p>
+<p><img src="C:\Users\Melody\AppData\Roaming\Typora\typora-user-images\image-20201202235506095.png" alt="image-20201202235506095"></p>
+<p>接着三步走：注册报名下载数据，查看数据前五行可以看到我们获得的数据如下：</p>
+<img src="C:\Users\Melody\AppData\Roaming\Typora\typora-user-images\image-20201202235609005.png" alt="image-20201202235609005" style="zoom:67%;" />
+
+<p>其中左边的label是数据集文本对应的标签，而右边的text则是编码后的文本，文本对应的标签列举如下：</p>
+<img src="C:\Users\Melody\AppData\Roaming\Typora\typora-user-images\image-20201202235628404.png" alt="image-20201202235628404" style="zoom: 50%;" />
+
+<p>根据官方描述：赛题以匿名处理后的新闻数据为赛题数据，数据集报名后可见并可下载。赛题数据为新闻文本，并按照字符级别进行匿名处理。整合划分出14个候选分类类别：财经、彩票、房产、股票、家居、教育、科技、社会、时尚、时政、体育、星座、游戏、娱乐的文本数据。</p>
+<p>赛题数据由以下几个部分构成：训练集20w条样本，测试集A包括5w条样本，测试集B包括5w条样本。为了预防选手人工标注测试集的情况，我们将比赛数据的文本按照字符级别进行了匿名处理。</p>
+<p>同时我们还应该注意到官网有给出结果评价指标，我们也需要根据这个评价指标衡量我们的验证集数据误差：</p>
+<p><img src="C:\Users\Melody\AppData\Roaming\Typora\typora-user-images\image-20201202235654877.png" alt="image-20201202235654877"></p>
+<p>既然该拿到的我们都拿到了，我们接下来就开始构思我们都应该使用哪些思路来完成我们的预测。</p>
+<h2 id="2-2-常见思路"><a href="#2-2-常见思路" class="headerlink" title="2.2 常见思路"></a><strong>2.2 常见思路</strong></h2><p>赛题本质是一个文本分类问题，需要根据每句的字符进行分类。但赛题给出的数据是匿名化的，不能直接使用中文分词等操作，这个是赛题的难点。</p>
+<p>因此本次赛题的难点是需要对匿名字符进行建模，进而完成文本分类的过程。由于文本数据是一种典型的非结构化数据，因此可能涉及到**<code>特征提取</code><strong>和</strong><code>分类模型</code>**两个部分。为了减低参赛难度，我们提供了一些解题思路供大家参考：</p>
+<ul>
+<li><strong>思路1</strong>：TF-IDF + 机器学习分类器：直接使用TF-IDF对文本提取特征，并使用分类器进行分类。在分类器的选择上，可以使用SVM、LR、或者XGBoost。</li>
+<li><strong>思路2</strong>：FastText：FastText是入门款的词向量，利用Facebook提供的FastText工具，可以快速构建出分类器。</li>
+<li><strong>思路3</strong>：WordVec + 深度学习分类器：WordVec是进阶款的词向量，并通过构建深度学习分类完成分类。深度学习分类的网络结构可以选择TextCNN、TextRNN或者BiLSTM。</li>
+<li><strong>思路4</strong>：Bert词向量：Bert是高配款的词向量，具有强大的建模学习能力。</li>
+</ul>
+<h1 id="三、基于机器学习的文本分类"><a href="#三、基于机器学习的文本分类" class="headerlink" title="三、基于机器学习的文本分类"></a><strong>三、基于机器学习的文本分类</strong></h1><h2 id="3-1-TF-IDF-机器学习分类器-思路1"><a href="#3-1-TF-IDF-机器学习分类器-思路1" class="headerlink" title="3.1 TF-IDF+机器学习分类器(思路1)"></a><strong>3.1 TF-IDF+机器学习分类器(思路1)</strong></h2><h4 id="3-1-1-什么是TF-IDF？"><a href="#3-1-1-什么是TF-IDF？" class="headerlink" title="3.1.1. 什么是TF-IDF？"></a><strong>3.1.1. 什么是TF-IDF？</strong></h4><p>TF-IDF(term frequency–inverse document frequency)是一种用于信息检索与数据挖掘的常用加权技术，常用于挖掘文章中的关键词，而且算法简单高效，常被工业用于最开始的文本数据清洗。</p>
+<p>TF-IDF有两层意思，一层是”词频”（Term Frequency，缩写为TF），另一层是”逆文档频率”（Inverse Document Frequency，缩写为IDF）。</p>
+<p>当有TF(词频)和IDF(逆文档频率)后，将这两个词相乘，就能得到一个词的TF-IDF的值。某个词在文章中的TF-IDF越大，那么一般而言这个词在这篇文章的重要性会越高，所以通过计算文章中各个词的TF-IDF，由大到小排序，排在最前面的几个词，就是该文章的关键词。</p>
+<h4 id="3-2-2-TF-IDF算法步骤"><a href="#3-2-2-TF-IDF算法步骤" class="headerlink" title="3.2.2. TF-IDF算法步骤"></a><strong>3.2.2. TF-IDF算法步骤</strong></h4><p><strong>第一步</strong>，计算词频：</p>
+<img src="C:\Users\Melody\AppData\Roaming\Typora\typora-user-images\image-20201202235831618.png" alt="image-20201202235831618" style="zoom:50%;" />
+
+<p>考虑到文章有长短之分，为了便于不同文章的比较，进行”词频”标准化:</p>
+<img src="C:\Users\Melody\AppData\Roaming\Typora\typora-user-images\image-20201202235847123.png" alt="image-20201202235847123" style="zoom: 50%;" />
+
+<p><strong>第二步</strong>，计算逆文档频率：</p>
+<p>这时，需要一个语料库（corpus），用来模拟语言的使用环境。</p>
+<img src="C:\Users\Melody\AppData\Roaming\Typora\typora-user-images\image-20201202235904403.png" alt="image-20201202235904403" style="zoom:50%;" />
+
+<p>如果一个词越常见，那么分母就越大，逆文档频率就越小越接近0。分母之所以要加1，是为了避免分母为0（即所有文档都不包含该词）。log表示对得到的值取对数。</p>
+<p><strong>第三步</strong>，计算TF-IDF：</p>
+<img src="https://mmbiz.qpic.cn/mmbiz_png/vI9nYe94fsHl2PYInTor9uj1UkVTPP4qvibj0FmA3M3IWFRTsQmco54gwYspPo7a4SmSkr9TSkk1TEbPzMysBOQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="img" style="zoom:50%;" />
+
+<p>可以看到，TF-IDF与一个词在文档中的出现次数成正比，与该词在整个语言中的出现次数成反比。所以，自动提取关键词的算法就很清楚了，就是计算出文档的每个词的TF-IDF值，然后按降序排列，取排在最前面的几个词。</p>
+<h4 id="3-3-3-优缺点"><a href="#3-3-3-优缺点" class="headerlink" title="3.3.3. 优缺点"></a><strong>3.3.3. 优缺点</strong></h4><p>TF-IDF的优点是简单快速，而且容易理解。缺点是有时候用词频来衡量文章中的一个词的重要性不够全面，有时候重要的词出现的可能不够多，而且这种计算无法体现位置信息，无法体现词在上下文的重要性。如果要体现词的上下文结构，那么你可能需要使用word2vec算法来支持。</p>
+<h1 id="四、基于深度学习的文本分类"><a href="#四、基于深度学习的文本分类" class="headerlink" title="四、基于深度学习的文本分类"></a>四、基于深度学习的文本分类</h1><h2 id="4-1-FastText-思路2"><a href="#4-1-FastText-思路2" class="headerlink" title="4.1 FastText(思路2)"></a><strong>4.1 FastText(思路2)</strong></h2><h4 id="4-1-1-FastText的核心思想"><a href="#4-1-1-FastText的核心思想" class="headerlink" title="4.1.1 FastText的核心思想"></a><strong>4.1.1 FastText的核心思想</strong></h4><p>将整篇文档的词及n-gram向量叠加平均得到文档向量，然后使用文档向量做softmax多分类。这中间涉及到两个技巧：字符级N-gram特征的引入以及分层Softmax分类。</p>
+<h4 id="4-1-2-字符级N-gram特征"><a href="#4-1-2-字符级N-gram特征" class="headerlink" title="4.1.2 字符级N-gram特征"></a><strong>4.1.2 字符级N-gram特征</strong></h4><p>N-gram是基于语言模型的算法，基本思想是将文本内容按照子节顺序进行大小为N的窗口滑动操作，最终形成窗口为N的字节片段序列。举个例子：</p>
+<blockquote>
+<p>我来到达观数据参观</p>
+</blockquote>
+<blockquote>
+<p>相应的bigram特征为：我来 来到 到达 达观 观数 数据 据参 参观</p>
+</blockquote>
+<blockquote>
+<p>相应的trigram特征为：我来到 来到达 到达观 达观数 观数据 数据参 据参观</p>
+</blockquote>
+<p>注意一点：n-gram中的gram根据粒度不同，有不同的含义。它可以是字粒度，也可以是词粒度的。上面所举的例子属于字粒度的n-gram，词粒度的n-gram看下面例子：</p>
+<blockquote>
+<p>我 来到 达观数据 参观</p>
+</blockquote>
+<blockquote>
+<p>相应的bigram特征为：我/来到 来到/达观数据 达观数据/参观</p>
+</blockquote>
+<blockquote>
+<p>相应的trigram特征为：我/来到/达观数据 来到/达观数据/参观</p>
+</blockquote>
+<p>n-gram产生的特征只是作为文本特征的候选集，你后面可能会采用信息熵、卡方统计、IDF等文本特征选择方式筛选出比较重要特征。</p>
+<h4 id="4-1-3-分层Softmax分类"><a href="#4-1-3-分层Softmax分类" class="headerlink" title="4.1.3 分层Softmax分类"></a><strong>4.1.3 分层Softmax分类</strong></h4><p>softmax函数常在神经网络输出层充当激活函数，目的就是将输出层的值归一化到0-1区间，将神经元输出构造成概率分布，主要就是起到将神经元输出值进行归一化的作用。</p>
+<p>下图是一个分层Softmax示例：</p>
+<img src="C:\Users\Melody\AppData\Roaming\Typora\typora-user-images\image-20201203000728656.png" alt="image-20201203000728656" style="zoom:67%;" />
+
+<p>通过分层的Softmax，计算复杂度一下从|K|降低到log|K|。</p>
+<h2 id="4-2-Word2Vec-深度学习分类器（思路3）"><a href="#4-2-Word2Vec-深度学习分类器（思路3）" class="headerlink" title="4.2 Word2Vec+深度学习分类器（思路3）"></a><strong>4.2 Word2Vec+深度学习分类器（思路3）</strong></h2><h4 id="4-2-1-Word2Vec"><a href="#4-2-1-Word2Vec" class="headerlink" title="4.2.1 Word2Vec"></a><strong>4.2.1 Word2Vec</strong></h4><p>Word2vec，是一群用来产生词向量的相关模型。这些模型为浅而双层的神经网络，用来训练以重新建构语言学之词文本。网络以词表现，并且需猜测相邻位置的输入词，在word2vec中词袋模型假设下，词的顺序是不重要的。训练完成之后，word2vec模型可用来映射每个词到一个向量，可用来表示词对词之间的关系，该向量为神经网络之隐藏层。【百度百科】</p>
+<p>Word2vec 是 Word Embedding 的方法之一。他是 2013 年由谷歌的 Mikolov 提出了一套新的词嵌入方法。</p>
+<h4 id="4-2-2-优化方法"><a href="#4-2-2-优化方法" class="headerlink" title="4.2.2 优化方法"></a><strong>4.2.2 优化方法</strong></h4><p>为了提高速度，Word2vec 经常采用 2 种加速方式：</p>
+<ul>
+<li>Negative Sample（负采样）</li>
+<li>Hierarchical Softmax</li>
+</ul>
+<h4 id="4-2-3-优缺点"><a href="#4-2-3-优缺点" class="headerlink" title="4.2.3 优缺点"></a><strong>4.2.3 优缺点</strong></h4><p><strong>优点：</strong></p>
+<ul>
+<li>由于 Word2vec 会考虑上下文，跟之前的 Embedding 方法相比，效果要更好（但不如 18 年之后的方法）</li>
+<li>比之前的 Embedding方 法维度更少，所以速度更快</li>
+<li>通用性很强，可以用在各种 NLP 任务中</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>由于词和向量是一对一的关系，所以多义词的问题无法解决。</li>
+<li>Word2vec 是一种静态的方式，虽然通用性强，但是无法针对特定任务做动态优化</li>
+</ul>
+<h2 id="4-3-Bert词向量-思路4"><a href="#4-3-Bert词向量-思路4" class="headerlink" title="4.3 Bert词向量(思路4)"></a><strong>4.3 Bert词向量(思路4)</strong></h2><p>BERT（Bidirectional Encoder Representations from Transformers）词向量模型，2018年10月在《BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding》这篇论文中被Google提出，在11种不同nlp测试中创出最佳成绩，包括将glue基准推至80.4%（绝对改进7.6%），multinli准确度达到86.7% （绝对改进率5.6%）等。</p>
+<h4 id="4-1-1-特征"><a href="#4-1-1-特征" class="headerlink" title="4.1.1 特征"></a><strong>4.1.1 特征</strong></h4><p>1、通过联合调节所有层中的左右上下文来预训练深度双向表示</p>
+<p>2、the first fine-tuning based representation model that achieves state-of-the-art performance on a large suite of sentence-level and token-level tasks, outperforming many systems with task-specific architectures</p>
+<p>3、所需计算量非常大。Jacob 说：「OpenAI 的 Transformer 有 12 层、768 个隐藏单元，他们使用 8 块 P100 在 8 亿词量的数据集上训练 40 个 Epoch 需要一个月，而 BERT-Large 模型有 24 层、2014 个隐藏单元，它们在有 33 亿词量的数据集上需要训练 40 个 Epoch，因此在 8 块 P100 上可能需要 1 年？16 Cloud TPU 已经是非常大的计算力了。</p>
+<p>4、预训练的BERT表示可以通过一个额外的输出层进行微调，适用于广泛任务的state-of-the-art模型的构建，比如问答任务和语言推理，无需针对具体任务做大幅架构修改。</p>
+<p>5、一词多义问题</p>
+<h1 id="五、学习和实践路径参考资料"><a href="#五、学习和实践路径参考资料" class="headerlink" title="五、学习和实践路径参考资料"></a>五、学习和实践路径参考资料</h1><p>1、复旦大学邱锡鹏组实验室新生一般完成的五个NLP练习上手实验（NLP四大类任务：分类、序列标注、文本匹配、文本生成，都需要完整实现一遍）。<br><a href="https://www.zhihu.com/question/324189960/answer/682130580?utm_source=wechat_session&amp;utm_medium=social&amp;utm_oi=952466020582064128">https://www.zhihu.com/question/324189960/answer/682130580?utm_source=wechat_session&amp;utm_medium=social&amp;utm_oi=952466020582064128</a><br>2自动化所宗成庆研究员：读懂NLP的过去与现在（梳理的非常好，把各个概念之间的关系和NLP的发展都梳理清楚了）<br><a href="https://mp.weixin.qq.com/s/xgySwq2m-mHT7XG1zZGpzw">https://mp.weixin.qq.com/s/xgySwq2m-mHT7XG1zZGpzw</a><br>3、中文自然语言处理入门实战<br><a href="https://mp.weixin.qq.com/s/5z7Xy4NL-buUkpBmv4iIpw">https://mp.weixin.qq.com/s/5z7Xy4NL-buUkpBmv4iIpw</a><br>4、自然语言处理全家福：纵览当前NLP中的任务、数据、模型与论文<br><a href="https://mp.weixin.qq.com/s/sQ903WNSR4v367t78_VG1Q">https://mp.weixin.qq.com/s/sQ903WNSR4v367t78_VG1Q</a><br>5、中文信息处理发展报告（综述由中文信息学会统筹，国内各大NLP专家撰写，非常适合入门了解NLP）<br><a href="http://cips-upload.bj.bcebos.com/cips2016.pdf">http://cips-upload.bj.bcebos.com/cips2016.pdf</a><br>6、Jumping NLP Curves: A Review of Natural Language Processing Research [Review Article]<br><a href="https://ieeexplore.ieee.org/document/6786458">https://ieeexplore.ieee.org/document/6786458</a><br>7、Natural Language Processing: A Review<br><a href="https://www.researchgate.net/publication/309210149_Natural_Language_Processing_A_Review">https://www.researchgate.net/publication/309210149_Natural_Language_Processing_A_Review</a><br>8、A Review of the Neural History of Natural Language Processing<br><a href="http://ruder.io/a-review-of-the-recent-history-of-nlp/">http://ruder.io/a-review-of-the-recent-history-of-nlp/</a><br>9、邓力和刘洋大神合著的图书《Deep Learning in Natural Language Processing》<br>10、宗成庆研究员所著《统计自然语言处理》（经典之作）<br>11、Steven Bird所著《Python自然语言处理》（快速掌握python开发nlp技术的各种能力）<br>12、机器学习 → 推荐周志华教授所著的《机器学习》<br>13、深度学习 → 推荐Ian Goodfellow等人合著的《Deep Learning》<br>14、开发框架 → 首推Pytorch，推荐陈云的《深度学习框架Pytorch入门与实践》或者廖星宇的《深度学习入门之Pytorch》<br>15、Tensorflow学习 → 推荐黄文坚、唐源的《Tensorflow实战》</p>
+]]></content>
+      <categories>
+        <category>【NLP】</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>NLP</tag>
+      </tags>
   </entry>
 </search>
