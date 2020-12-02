@@ -19,8 +19,20 @@
 ]]></content>
   </entry>
   <entry>
-    <title>Leetcode刷题笔记</title>
+    <title>Leetcode148</title>
     <url>/2020/12/02/Leetcode%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[]]></content>
+      <categories>
+        <category>数据结构与算法</category>
+      </categories>
+      <tags>
+        <tag>Leetcode</tag>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Leetcode44</title>
+    <url>/2020/12/02/Leetcode44/</url>
     <content><![CDATA[]]></content>
   </entry>
 </search>
