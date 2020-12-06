@@ -1,0 +1,405 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>天池推荐系统入门赛——数据分析 | CYYcosmos</title><meta name="author" content="Yanyu Chen"><meta name="copyright" content="Yanyu Chen"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="# 数据分析 数据分析的价值主要在于熟悉了解整个数据集的基本情况包括每个文件里有哪些数据，具体的文件中的每个字段表示什么实际含义，以及数据集中特征之间的相关性，在推荐场景下主要就是分析用户本身的基本属性，文章基本属性，以及用户和文章交互的一些分布，这些都有利于后面的召回策略的选择，以及特征工程。 建议：当特征工程和模型调参已经很难继续上分了，可以回来在重新从新的角度去分析这些数据，或许可以找到上">
+<meta property="og:type" content="article">
+<meta property="og:title" content="天池推荐系统入门赛——数据分析">
+<meta property="og:url" content="http://cyy0214.github.io/2020/12/02/%E5%A4%A9%E6%B1%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%85%A5%E9%97%A8%E8%B5%9B%E2%80%94%E2%80%94%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="CYYcosmos">
+<meta property="og:description" content="# 数据分析 数据分析的价值主要在于熟悉了解整个数据集的基本情况包括每个文件里有哪些数据，具体的文件中的每个字段表示什么实际含义，以及数据集中特征之间的相关性，在推荐场景下主要就是分析用户本身的基本属性，文章基本属性，以及用户和文章交互的一些分布，这些都有利于后面的召回策略的选择，以及特征工程。 建议：当特征工程和模型调参已经很难继续上分了，可以回来在重新从新的角度去分析这些数据，或许可以找到上">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
+<meta property="article:published_time" content="2020-12-02T11:16:19.000Z">
+<meta property="article:modified_time" content="2020-12-06T03:22:11.026Z">
+<meta property="article:author" content="Yanyu Chen">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"><link rel="shortcut icon" href="/img/3.jpg"><link rel="canonical" href="http://cyy0214.github.io/2020/12/02/%E5%A4%A9%E6%B1%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%85%A5%E9%97%A8%E8%B5%9B%E2%80%94%E2%80%94%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"We didn't find any results for the search: ${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  ClickShowText: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2020-12-06 11:22:11'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}})()</script><meta name="generator" content="Hexo 5.2.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">Loading...</div></div></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/img/3.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">6</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">2</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">1</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/6.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">CYYcosmos</a></span><span id="menus"><div id="search_button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> Search</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><h1 class="post-title">天池推荐系统入门赛——数据分析</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2020-12-02T11:16:19.000Z" title="Created 2020-12-02 19:16:19">2020-12-02</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2020-12-06T03:22:11.026Z" title="Updated 2020-12-06 11:22:11">2020-12-06</time></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>﻿# 数据分析</p>
+<p>数据分析的价值主要在于熟悉了解整个数据集的基本情况包括每个文件里有哪些数据，具体的文件中的每个字段表示什么实际含义，以及数据集中特征之间的相关性，在推荐场景下主要就是分析用户本身的基本属性，文章基本属性，以及用户和文章交互的一些分布，这些都有利于后面的召回策略的选择，以及特征工程。</p>
+<p><strong>建议：当特征工程和模型调参已经很难继续上分了，可以回来在重新从新的角度去分析这些数据，或许可以找到上分的灵感</strong></p>
+<h2 id="导包"><a href="#导包" class="headerlink" title="导包"></a>导包</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 导入相关包</span></span><br><span class="line">%matplotlib inline</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> seaborn <span class="keyword">as</span> sns</span><br><span class="line">plt.rc(<span class="string">&#x27;font&#x27;</span>, family=<span class="string">&#x27;SimHei&#x27;</span>, size=<span class="number">13</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> os,gc,re,warnings,sys</span><br><span class="line">warnings.filterwarnings(<span class="string">&quot;ignore&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="读取数据"><a href="#读取数据" class="headerlink" title="读取数据"></a>读取数据</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">path = <span class="string">&#x27;./data_raw/&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#####train</span></span><br><span class="line">trn_click = pd.read_csv(path+<span class="string">&#x27;train_click_log.csv&#x27;</span>)</span><br><span class="line">item_df = pd.read_csv(path+<span class="string">&#x27;articles.csv&#x27;</span>)</span><br><span class="line">item_df = item_df.rename(columns=&#123;<span class="string">&#x27;article_id&#x27;</span>: <span class="string">&#x27;click_article_id&#x27;</span>&#125;)  <span class="comment">#重命名，方便后续match</span></span><br><span class="line">item_emb_df = pd.read_csv(path+<span class="string">&#x27;articles_emb.csv&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#####test</span></span><br><span class="line">tst_click = pd.read_csv(path+<span class="string">&#x27;testA_click_log.csv&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="数据预处理"><a href="#数据预处理" class="headerlink" title="数据预处理"></a>数据预处理</h2><p>计算用户点击rank和点击次数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 对每个用户的点击时间戳进行排序</span></span><br><span class="line">trn_click[<span class="string">&#x27;rank&#x27;</span>] = trn_click.groupby([<span class="string">&#x27;user_id&#x27;</span>])[<span class="string">&#x27;click_timestamp&#x27;</span>].rank(ascending=<span class="literal">False</span>).astype(<span class="built_in">int</span>)</span><br><span class="line">tst_click[<span class="string">&#x27;rank&#x27;</span>] = tst_click.groupby([<span class="string">&#x27;user_id&#x27;</span>])[<span class="string">&#x27;click_timestamp&#x27;</span>].rank(ascending=<span class="literal">False</span>).astype(<span class="built_in">int</span>)</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#计算用户点击文章的次数，并添加新的一列count</span></span><br><span class="line">trn_click[<span class="string">&#x27;click_cnts&#x27;</span>] = trn_click.groupby([<span class="string">&#x27;user_id&#x27;</span>])[<span class="string">&#x27;click_timestamp&#x27;</span>].transform(<span class="string">&#x27;count&#x27;</span>)</span><br><span class="line">tst_click[<span class="string">&#x27;click_cnts&#x27;</span>] = tst_click.groupby([<span class="string">&#x27;user_id&#x27;</span>])[<span class="string">&#x27;click_timestamp&#x27;</span>].transform(<span class="string">&#x27;count&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="数据浏览"><a href="#数据浏览" class="headerlink" title="数据浏览"></a>数据浏览</h2><h3 id="用户点击日志文件-训练集"><a href="#用户点击日志文件-训练集" class="headerlink" title="用户点击日志文件_训练集"></a>用户点击日志文件_训练集</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">trn_click = trn_click.merge(item_df, how=<span class="string">&#x27;left&#x27;</span>, on=[<span class="string">&#x27;click_article_id&#x27;</span>])</span><br><span class="line">trn_click.head()</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119112706647.png" alt="image-20201119112706647"></p>
+<p><strong>train_click_log.csv文件数据中每个字段的含义</strong> </p>
+<ol>
+<li>user_id: 用户的唯一标识</li>
+<li>click_article_id: 用户点击的文章唯一标识</li>
+<li>click_timestamp: 用户点击文章时的时间戳</li>
+<li>click_environment: 用户点击文章的环境</li>
+<li>click_deviceGroup: 用户点击文章的设备组</li>
+<li>click_os: 用户点击文章时的操作系统</li>
+<li>click_country: 用户点击文章时的所在的国家</li>
+<li>click_region: 用户点击文章时所在的区域</li>
+<li>click_referrer_type: 用户点击文章时，文章的来源</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#用户点击日志信息</span></span><br><span class="line">trn_click.info()</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119112622939.png" alt="image-20201119112622939"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">trn_click.describe()</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119112649376.png" alt="image-20201119112649376"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#训练集中的用户数量为20w</span></span><br><span class="line">trn_click.user_id.nunique()</span><br></pre></td></tr></table></figure>
+
+
+<pre><code>200000</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">trn_click.groupby(<span class="string">&#x27;user_id&#x27;</span>)[<span class="string">&#x27;click_article_id&#x27;</span>].count().<span class="built_in">min</span>()  <span class="comment"># 训练集里面每个用户至少点击了两篇文章</span></span><br></pre></td></tr></table></figure>
+
+
+<pre><code>2</code></pre>
+<p><strong>画直方图大体看一下基本的属性分布</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">plt.figure()</span><br><span class="line">plt.figure(figsize=(<span class="number">15</span>, <span class="number">20</span>))</span><br><span class="line">i = <span class="number">1</span></span><br><span class="line"><span class="keyword">for</span> col <span class="keyword">in</span> [<span class="string">&#x27;click_article_id&#x27;</span>, <span class="string">&#x27;click_timestamp&#x27;</span>, <span class="string">&#x27;click_environment&#x27;</span>, <span class="string">&#x27;click_deviceGroup&#x27;</span>, <span class="string">&#x27;click_os&#x27;</span>, <span class="string">&#x27;click_country&#x27;</span>, </span><br><span class="line">            <span class="string">&#x27;click_region&#x27;</span>, <span class="string">&#x27;click_referrer_type&#x27;</span>, <span class="string">&#x27;rank&#x27;</span>, <span class="string">&#x27;click_cnts&#x27;</span>]:</span><br><span class="line">    plot_envs = plt.subplot(<span class="number">5</span>, <span class="number">2</span>, i)</span><br><span class="line">    i += <span class="number">1</span></span><br><span class="line">    v = trn_click[col].value_counts().reset_index()[:<span class="number">10</span>]</span><br><span class="line">    fig = sns.barplot(x=v[<span class="string">&#x27;index&#x27;</span>], y=v[col])</span><br><span class="line">    <span class="keyword">for</span> item <span class="keyword">in</span> fig.get_xticklabels():</span><br><span class="line">        item.set_rotation(<span class="number">90</span>)</span><br><span class="line">    plt.title(col)</span><br><span class="line">plt.tight_layout()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/20201118000820300.png" alt="在这里插入图片描述"></p>
+<p><strong>从点击时间clik_timestamp来看，分布较为平均，可不做特殊处理。由于时间戳是13位的，后续将时间格式转换成10位方便计算。</strong></p>
+<p><strong>从点击环境click_environment来看，仅有1922次（占0.1%）点击环境为1；仅有24617次（占2.3%）点击环境为2；剩余（占97.6%）点击环境为4。</strong></p>
+<p><strong>从点击设备组click_deviceGroup来看，设备1占大部分（60.4%），设备3占36%。</strong></p>
+<h3 id="测试集用户点击日志"><a href="#测试集用户点击日志" class="headerlink" title="测试集用户点击日志"></a>测试集用户点击日志</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tst_click = tst_click.merge(item_df, how=<span class="string">&#x27;left&#x27;</span>, on=[<span class="string">&#x27;click_article_id&#x27;</span>])</span><br><span class="line">tst_click.head()</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119112952261.png" alt="image-20201119112952261"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tst_click.describe()</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119113015529.png" alt="image-20201119113015529"></p>
+<p><strong>我们可以看出训练集和测试集的用户是完全不一样的</strong></p>
+<p><strong>训练集的用户ID由0 ~ 199999，而测试集A的用户ID由200000 ~ 249999。</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#测试集中的用户数量为5w</span></span><br><span class="line">tst_click.user_id.nunique()</span><br></pre></td></tr></table></figure>
+
+
+<pre><code>50000</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tst_click.groupby(<span class="string">&#x27;user_id&#x27;</span>)[<span class="string">&#x27;click_article_id&#x27;</span>].count().<span class="built_in">min</span>() <span class="comment"># 注意测试集里面有只点击过一次文章的用户</span></span><br></pre></td></tr></table></figure>
+
+
+<pre><code>1</code></pre>
+<h3 id="新闻文章信息数据表"><a href="#新闻文章信息数据表" class="headerlink" title="新闻文章信息数据表"></a>新闻文章信息数据表</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#新闻文章数据集浏览</span></span><br><span class="line">item_df.head().append(item_df.tail())</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119113118388.png" alt="image-20201119113118388"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">item_df[<span class="string">&#x27;words_count&#x27;</span>].value_counts()</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119113147240.png" alt="image-20201119113147240"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">print(item_df[<span class="string">&#x27;category_id&#x27;</span>].nunique())     <span class="comment"># 461个文章主题</span></span><br><span class="line">item_df[<span class="string">&#x27;category_id&#x27;</span>].hist()</span><br></pre></td></tr></table></figure>
+
+<p><img src="C:\Users\ruyiluo\AppData\Roaming\Typora\typora-user-images\image-20201119113223601.png" alt="image-20201119113223601"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">item_df.shape       <span class="comment"># 364047篇文章</span></span><br></pre></td></tr></table></figure>
+
+
+<pre><code>(364047, 4)</code></pre>
+<h3 id="新闻文章embedding向量表示"><a href="#新闻文章embedding向量表示" class="headerlink" title="新闻文章embedding向量表示"></a>新闻文章embedding向量表示</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">item_emb_df.head()</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119113253455.png" alt="image-20201119113253455"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">item_emb_df.shape</span><br></pre></td></tr></table></figure>
+
+
+<pre><code>(364047, 251)</code></pre>
+<h2 id="数据分析"><a href="#数据分析" class="headerlink" title="数据分析"></a>数据分析</h2><h3 id="用户重复点击"><a href="#用户重复点击" class="headerlink" title="用户重复点击"></a>用户重复点击</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#####merge</span></span><br><span class="line">user_click_merge = trn_click.append(tst_click)</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#用户重复点击</span></span><br><span class="line">user_click_count = user_click_merge.groupby([<span class="string">&#x27;user_id&#x27;</span>, <span class="string">&#x27;click_article_id&#x27;</span>])[<span class="string">&#x27;click_timestamp&#x27;</span>].agg(&#123;<span class="string">&#x27;count&#x27;</span>&#125;).reset_index()</span><br><span class="line">user_click_count[:<span class="number">10</span>]</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119113334727.png" alt="image-20201119113334727"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">user_click_count[user_click_count[<span class="string">&#x27;count&#x27;</span>]&gt;<span class="number">7</span>]</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119113351807.png" alt="image-20201119113351807"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">user_click_count[<span class="string">&#x27;count&#x27;</span>].unique()</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119113429769.png" alt="image-20201119113429769"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#用户点击新闻次数</span></span><br><span class="line">user_click_count.loc[:,<span class="string">&#x27;count&#x27;</span>].value_counts() </span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119113414785.png" alt="image-20201119113414785"></p>
+<p><strong>可以看出：有1605541（约占99.2%）的用户未重复阅读过文章，仅有极少数用户重复点击过某篇文章。 这个也可以单独制作成特征</strong></p>
+<h3 id="用户点击环境变化分析"><a href="#用户点击环境变化分析" class="headerlink" title="用户点击环境变化分析"></a>用户点击环境变化分析</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">plot_envs</span>(<span class="params">df, cols, r, c</span>):</span></span><br><span class="line">    plt.figure()</span><br><span class="line">    plt.figure(figsize=(<span class="number">10</span>, <span class="number">5</span>))</span><br><span class="line">    i = <span class="number">1</span></span><br><span class="line">    <span class="keyword">for</span> col <span class="keyword">in</span> cols:</span><br><span class="line">        plt.subplot(r, c, i)</span><br><span class="line">        i += <span class="number">1</span></span><br><span class="line">        v = df[col].value_counts().reset_index()</span><br><span class="line">        fig = sns.barplot(x=v[<span class="string">&#x27;index&#x27;</span>], y=v[col])</span><br><span class="line">        <span class="keyword">for</span> item <span class="keyword">in</span> fig.get_xticklabels():</span><br><span class="line">            item.set_rotation(<span class="number">90</span>)</span><br><span class="line">        plt.title(col)</span><br><span class="line">    plt.tight_layout()</span><br><span class="line">    plt.show()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 分析用户点击环境变化是否明显，这里随机采样10个用户分析这些用户的点击环境分布</span></span><br><span class="line">sample_user_ids = np.random.choice(tst_click[<span class="string">&#x27;user_id&#x27;</span>].unique(), size=<span class="number">5</span>, replace=<span class="literal">False</span>)</span><br><span class="line">sample_users = user_click_merge[user_click_merge[<span class="string">&#x27;user_id&#x27;</span>].isin(sample_user_ids)]</span><br><span class="line">cols = [<span class="string">&#x27;click_environment&#x27;</span>,<span class="string">&#x27;click_deviceGroup&#x27;</span>, <span class="string">&#x27;click_os&#x27;</span>, <span class="string">&#x27;click_country&#x27;</span>, <span class="string">&#x27;click_region&#x27;</span>,<span class="string">&#x27;click_referrer_type&#x27;</span>]</span><br><span class="line"><span class="keyword">for</span> _, user_df <span class="keyword">in</span> sample_users.groupby(<span class="string">&#x27;user_id&#x27;</span>):</span><br><span class="line">    plot_envs(user_df, cols, <span class="number">2</span>, <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119113624424.png" alt="image-20201119113624424"></p>
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119113637746.png" alt="image-20201119113637746"></p>
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119113652132.png" alt="image-20201119113652132"></p>
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119113702034.png" alt="image-20201119113702034"></p>
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119113714135.png" alt="image-20201119113714135"></p>
+<p><strong>可以看出绝大多数数的用户的点击环境是比较固定的。思路：可以基于这些环境的统计特征来代表该用户本身的属性</strong></p>
+<h3 id="用户点击新闻数量的分布"><a href="#用户点击新闻数量的分布" class="headerlink" title="用户点击新闻数量的分布"></a>用户点击新闻数量的分布</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">user_click_item_count = <span class="built_in">sorted</span>(user_click_merge.groupby(<span class="string">&#x27;user_id&#x27;</span>)[<span class="string">&#x27;click_article_id&#x27;</span>].count(), reverse=<span class="literal">True</span>)</span><br><span class="line">plt.plot(user_click_item_count)</span><br></pre></td></tr></table></figure>
+
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119113759490.png" alt="image-20201119113759490"></p>
+<p><strong>可以根据用户的点击文章次数看出用户的活跃度</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#点击次数在前50的用户</span></span><br><span class="line">plt.plot(user_click_item_count[:<span class="number">50</span>])</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119113825586.png" alt="image-20201119113825586"></p>
+<p><strong>点击次数排前50的用户的点击次数都在100次以上。思路：我们可以定义点击次数大于等于100次的用户为活跃用户，这是一种简单的处理思路， 判断用户活跃度，更加全面的是再结合上点击时间，后面我们会基于点击次数和点击时间两个方面来判断用户活跃度。</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#点击次数排名在[25000:50000]之间</span></span><br><span class="line">plt.plot(user_click_item_count[<span class="number">25000</span>:<span class="number">50000</span>])</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119113844946.png" alt="image-20201119113844946"></p>
+<p><strong>可以看出点击次数小于等于两次的用户非常的多，这些用户可以认为是非活跃用户</strong></p>
+<h3 id="新闻点击次数分析"><a href="#新闻点击次数分析" class="headerlink" title="新闻点击次数分析"></a>新闻点击次数分析</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">item_click_count = <span class="built_in">sorted</span>(user_click_merge.groupby(<span class="string">&#x27;click_article_id&#x27;</span>)[<span class="string">&#x27;user_id&#x27;</span>].count(), reverse=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plt.plot(item_click_count)</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119113912912.png" alt="image-20201119113912912"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plt.plot(item_click_count[:<span class="number">100</span>])</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119113930745.png" alt="image-20201119113930745"></p>
+<p><strong>可以看出点击次数最多的前100篇新闻，点击次数大于1000次</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plt.plot(item_click_count[:<span class="number">20</span>])</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119113958254.png" alt="image-20201119113958254"></p>
+<p><strong>点击次数最多的前20篇新闻，点击次数大于2500。思路：可以定义这些新闻为热门新闻， 这个也是简单的处理方式，后面我们也是根据点击次数和时间进行文章热度的一个划分。</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plt.plot(item_click_count[<span class="number">3500</span>:])</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119114017762.png" alt="image-20201119114017762"></p>
+<p><strong>可以发现很多新闻只被点击过一两次。思路：可以定义这些新闻是冷门新闻。</strong></p>
+<h3 id="新闻共现频次：两篇新闻连续出现的次数"><a href="#新闻共现频次：两篇新闻连续出现的次数" class="headerlink" title="新闻共现频次：两篇新闻连续出现的次数"></a>新闻共现频次：两篇新闻连续出现的次数</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">tmp = user_click_merge.sort_values(<span class="string">&#x27;click_timestamp&#x27;</span>)</span><br><span class="line">tmp[<span class="string">&#x27;next_item&#x27;</span>] = tmp.groupby([<span class="string">&#x27;user_id&#x27;</span>])[<span class="string">&#x27;click_article_id&#x27;</span>].transform(<span class="keyword">lambda</span> x:x.shift(-<span class="number">1</span>))</span><br><span class="line">union_item = tmp.groupby([<span class="string">&#x27;click_article_id&#x27;</span>,<span class="string">&#x27;next_item&#x27;</span>])[<span class="string">&#x27;click_timestamp&#x27;</span>].agg(&#123;<span class="string">&#x27;count&#x27;</span>&#125;).reset_index().sort_values(<span class="string">&#x27;count&#x27;</span>, ascending=<span class="literal">False</span>)</span><br><span class="line">union_item[[<span class="string">&#x27;count&#x27;</span>]].describe()</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119114044351.png" alt="image-20201119114044351"></p>
+<p><strong>由统计数据可以看出，平均共现次数2.88，最高为1687。</strong></p>
+<p><strong>说明用户看的新闻，相关性是比较强的。</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#画个图直观地看一看</span></span><br><span class="line">x = union_item[<span class="string">&#x27;click_article_id&#x27;</span>]</span><br><span class="line">y = union_item[<span class="string">&#x27;count&#x27;</span>]</span><br><span class="line">plt.scatter(x, y)</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119114106223.png" alt="image-20201119114106223"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plt.plot(union_item[<span class="string">&#x27;count&#x27;</span>].values[<span class="number">40000</span>:])</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119114122557.png" alt="image-20201119114122557"></p>
+<p><strong>大概有70000个pair至少共现一次。</strong></p>
+<h3 id="新闻文章信息"><a href="#新闻文章信息" class="headerlink" title="新闻文章信息"></a>新闻文章信息</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#不同类型的新闻出现的次数</span></span><br><span class="line">plt.plot(user_click_merge[<span class="string">&#x27;category_id&#x27;</span>].value_counts().values)</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119114144058.png" alt="image-20201119114144058"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#出现次数比较少的新闻类型, 有些新闻类型，基本上就出现过几次</span></span><br><span class="line">plt.plot(user_click_merge[<span class="string">&#x27;category_id&#x27;</span>].value_counts().values[<span class="number">150</span>:])</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119114201764.png" alt="image-20201119114201764"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#新闻字数的描述性统计</span></span><br><span class="line">user_click_merge[<span class="string">&#x27;words_count&#x27;</span>].describe()</span><br></pre></td></tr></table></figure>
+
+<p><img src="C:\Users\ruyiluo\AppData\Roaming\Typora\typora-user-images\image-20201119114216116.png" alt="image-20201119114216116"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plt.plot(user_click_merge[<span class="string">&#x27;words_count&#x27;</span>].values)</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119114241194.png" alt="image-20201119114241194"></p>
+<h3 id="用户点击的新闻类型的偏好"><a href="#用户点击的新闻类型的偏好" class="headerlink" title="用户点击的新闻类型的偏好"></a>用户点击的新闻类型的偏好</h3><p>此特征可以用于度量用户的兴趣是否广泛。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plt.plot(<span class="built_in">sorted</span>(user_click_merge.groupby(<span class="string">&#x27;user_id&#x27;</span>)[<span class="string">&#x27;category_id&#x27;</span>].nunique(), reverse=<span class="literal">True</span>))</span><br></pre></td></tr></table></figure>
+
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119114300286.png" alt="image-20201119114300286"></p>
+<p><strong>从上图中可以看出有一小部分用户阅读类型是极其广泛的，大部分人都处在20个新闻类型以下。</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">user_click_merge.groupby(<span class="string">&#x27;user_id&#x27;</span>)[<span class="string">&#x27;category_id&#x27;</span>].nunique().reset_index().describe()</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119114318523.png" alt="image-20201119114318523"></p>
+<h3 id="用户查看文章的长度的分布"><a href="#用户查看文章的长度的分布" class="headerlink" title="用户查看文章的长度的分布"></a>用户查看文章的长度的分布</h3><p>通过统计不同用户点击新闻的平均字数，这个可以反映用户是对长文更感兴趣还是对短文更感兴趣。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plt.plot(<span class="built_in">sorted</span>(user_click_merge.groupby(<span class="string">&#x27;user_id&#x27;</span>)[<span class="string">&#x27;words_count&#x27;</span>].mean(), reverse=<span class="literal">True</span>))</span><br></pre></td></tr></table></figure>
+
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119114337448.png" alt="image-20201119114337448"></p>
+<p><strong>从上图中可以发现有一小部分人看的文章平均词数非常高，也有一小部分人看的平均文章次数非常低。</strong></p>
+<p><strong>大多数人偏好于阅读字数在200-400字之间的新闻。</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#挑出大多数人的区间仔细看看</span></span><br><span class="line">plt.plot(<span class="built_in">sorted</span>(user_click_merge.groupby(<span class="string">&#x27;user_id&#x27;</span>)[<span class="string">&#x27;words_count&#x27;</span>].mean(), reverse=<span class="literal">True</span>)[<span class="number">1000</span>:<span class="number">45000</span>])</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119114355195.png" alt="image-20201119114355195"></p>
+<p><strong>可以发现大多数人都是看250字以下的文章</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#更加详细的参数</span></span><br><span class="line">user_click_merge.groupby(<span class="string">&#x27;user_id&#x27;</span>)[<span class="string">&#x27;words_count&#x27;</span>].mean().reset_index().describe()</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119114418911.png" alt="image-20201119114418911"></p>
+<h3 id="用户点击新闻的时间分析"><a href="#用户点击新闻的时间分析" class="headerlink" title="用户点击新闻的时间分析"></a>用户点击新闻的时间分析</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#为了更好的可视化，这里把时间进行归一化操作</span></span><br><span class="line"><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> MinMaxScaler</span><br><span class="line">mm = MinMaxScaler()</span><br><span class="line">user_click_merge[<span class="string">&#x27;click_timestamp&#x27;</span>] = mm.fit_transform(user_click_merge[[<span class="string">&#x27;click_timestamp&#x27;</span>]])</span><br><span class="line">user_click_merge[<span class="string">&#x27;created_at_ts&#x27;</span>] = mm.fit_transform(user_click_merge[[<span class="string">&#x27;created_at_ts&#x27;</span>]])</span><br><span class="line"></span><br><span class="line">user_click_merge = user_click_merge.sort_values(<span class="string">&#x27;click_timestamp&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">user_click_merge.head()</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119114447904.png" alt="image-20201119114447904"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mean_diff_time_func</span>(<span class="params">df, col</span>):</span></span><br><span class="line">    df = pd.DataFrame(df, columns=&#123;col&#125;)</span><br><span class="line">    df[<span class="string">&#x27;time_shift1&#x27;</span>] = df[col].shift(<span class="number">1</span>).fillna(<span class="number">0</span>)</span><br><span class="line">    df[<span class="string">&#x27;diff_time&#x27;</span>] = <span class="built_in">abs</span>(df[col] - df[<span class="string">&#x27;time_shift1&#x27;</span>])</span><br><span class="line">    <span class="keyword">return</span> df[<span class="string">&#x27;diff_time&#x27;</span>].mean()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 点击时间差的平均值</span></span><br><span class="line">mean_diff_click_time = user_click_merge.groupby(<span class="string">&#x27;user_id&#x27;</span>)[<span class="string">&#x27;click_timestamp&#x27;</span>, <span class="string">&#x27;created_at_ts&#x27;</span>].apply(<span class="keyword">lambda</span> x: mean_diff_time_func(x, <span class="string">&#x27;click_timestamp&#x27;</span>))</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plt.plot(<span class="built_in">sorted</span>(mean_diff_click_time.values, reverse=<span class="literal">True</span>))</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119114505086.png" alt="image-20201119114505086"></p>
+<p><strong>从上图可以发现不同用户点击文章的时间差是有差异的。</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 前后点击文章的创建时间差的平均值</span></span><br><span class="line">mean_diff_created_time = user_click_merge.groupby(<span class="string">&#x27;user_id&#x27;</span>)[<span class="string">&#x27;click_timestamp&#x27;</span>, <span class="string">&#x27;created_at_ts&#x27;</span>].apply(<span class="keyword">lambda</span> x: mean_diff_time_func(x, <span class="string">&#x27;created_at_ts&#x27;</span>))</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plt.plot(<span class="built_in">sorted</span>(mean_diff_created_time.values, reverse=<span class="literal">True</span>))</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119122227666.png" alt="image-20201119122227666"></p>
+<p><strong>从图中可以发现用户先后点击文章，文章的创建时间也是有差异的</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用户前后点击文章的相似性分布</span></span><br><span class="line">item_idx_2_rawid_dict = <span class="built_in">dict</span>(<span class="built_in">zip</span>(item_emb_df[<span class="string">&#x27;article_id&#x27;</span>], item_emb_df.index))</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">del</span> item_emb_df[<span class="string">&#x27;article_id&#x27;</span>]</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">item_emb_np = np.ascontiguousarray(item_emb_df.values, dtype=np.float32)</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 随机选择5个用户，查看这些用户前后查看文章的相似性</span></span><br><span class="line">sub_user_ids = np.random.choice(user_click_merge.user_id.unique(), size=<span class="number">15</span>, replace=<span class="literal">False</span>)</span><br><span class="line">sub_user_info = user_click_merge[user_click_merge[<span class="string">&#x27;user_id&#x27;</span>].isin(sub_user_ids)]</span><br><span class="line"></span><br><span class="line">sub_user_info.head()</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119122251274.png" alt="image-20201119122251274"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_item_sim_list</span>(<span class="params">df</span>):</span></span><br><span class="line">    sim_list = []</span><br><span class="line">    item_list = df[<span class="string">&#x27;click_article_id&#x27;</span>].values</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="built_in">len</span>(item_list)-<span class="number">1</span>):</span><br><span class="line">        emb1 = item_emb_np[item_idx_2_rawid_dict[item_list[i]]]</span><br><span class="line">        emb2 = item_emb_np[item_idx_2_rawid_dict[item_list[i+<span class="number">1</span>]]]</span><br><span class="line">        sim_list.append(np.dot(emb1,emb2)/(np.linalg.norm(emb1)*(np.linalg.norm(emb2))))</span><br><span class="line">    sim_list.append(<span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> sim_list</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> _, user_df <span class="keyword">in</span> sub_user_info.groupby(<span class="string">&#x27;user_id&#x27;</span>):</span><br><span class="line">    item_sim_list = get_item_sim_list(user_df)</span><br><span class="line">    plt.plot(item_sim_list)</span><br></pre></td></tr></table></figure>
+
+
+<p><img src="http://ryluo.oss-cn-chengdu.aliyuncs.com/abc/image-20201119122310969.png" alt="image-20201119122310969"></p>
+<p><strong>从图中可以看出有些用户前后看的商品的相似度波动比较大，有些波动比较小，也是有一定的区分度的。</strong></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>通过数据分析的过程， 我们目前可以得到以下几点重要的信息， 这个对于我们进行后面的特征制作和分析非常有帮助：</p>
+<ol>
+<li>训练集和测试集的用户id没有重复，也就是测试集里面的用户没有模型是没有见过的</li>
+<li>训练集中用户最少的点击文章数是2， 而测试集里面用户最少的点击文章数是1</li>
+<li>用户对于文章存在重复点击的情况， 但这个都存在于训练集里面</li>
+<li>同一用户的点击环境存在不唯一的情况，后面做这部分特征的时候可以采用统计特征</li>
+<li>用户点击文章的次数有很大的区分度，后面可以根据这个制作衡量用户活跃度的特征</li>
+<li>文章被用户点击的次数也有很大的区分度，后面可以根据这个制作衡量文章热度的特征</li>
+<li>用户看的新闻，相关性是比较强的，所以往往我们判断用户是否对某篇文章感兴趣的时候， 在很大程度上会和他历史点击过的文章有关</li>
+<li>用户点击的文章字数有比较大的区别， 这个可以反映用户对于文章字数的区别</li>
+<li>用户点击过的文章主题也有很大的区别， 这个可以反映用户的主题偏好<br>10.不同用户点击文章的时间差也会有所区别， 这个可以反映用户对于文章时效性的偏好</li>
+</ol>
+<p>所以根据上面的一些分析，可以更好的帮助我们后面做好特征工程， 充分挖掘数据的隐含信息。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">Yanyu Chen</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://cyy0214.github.io/2020/12/02/%E5%A4%A9%E6%B1%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%85%A5%E9%97%A8%E8%B5%9B%E2%80%94%E2%80%94%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/">http://cyy0214.github.io/2020/12/02/%E5%A4%A9%E6%B1%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%85%A5%E9%97%A8%E8%B5%9B%E2%80%94%E2%80%94%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/12/02/%E5%A4%A9%E6%B1%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%85%A5%E9%97%A8%E8%B5%9B%E2%80%94%E2%80%94%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/"><img class="prev-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">天池推荐系统入门赛——特征工程</div></div></a></div><div class="next-post pull-right"><a href="/2020/12/02/%E5%A4%A9%E6%B1%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%85%A5%E9%97%A8%E8%B5%9B%E2%80%94%E2%80%94%E8%B5%9B%E9%A2%98%E7%90%86%E8%A7%A3+Baseline/"><img class="next-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">天池推荐系统入门赛——赛题理解+Baseline</div></div></a></div></nav></div><div class="aside_content" id="aside_content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-avatar is-center"><img class="avatar-img" src="/img/3.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Yanyu Chen</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">6</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">2</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">1</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/cyy0214"><i class="fab fa-github"></i><span>Follow Me</span></a></div></div><div class="card-widget card-announcement"><div class="card-content"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>Announcement</span></div><div class="announcement_content">If you have any problem, please feel free to contact with me.,E-mail：yanyu_chen_98@163.com</div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="card-content"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%BC%E5%8C%85"><span class="toc-number">1.</span> <span class="toc-text">导包</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%BB%E5%8F%96%E6%95%B0%E6%8D%AE"><span class="toc-number">2.</span> <span class="toc-text">读取数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86"><span class="toc-number">3.</span> <span class="toc-text">数据预处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%B5%8F%E8%A7%88"><span class="toc-number">4.</span> <span class="toc-text">数据浏览</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E7%82%B9%E5%87%BB%E6%97%A5%E5%BF%97%E6%96%87%E4%BB%B6-%E8%AE%AD%E7%BB%83%E9%9B%86"><span class="toc-number">4.1.</span> <span class="toc-text">用户点击日志文件_训练集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E9%9B%86%E7%94%A8%E6%88%B7%E7%82%B9%E5%87%BB%E6%97%A5%E5%BF%97"><span class="toc-number">4.2.</span> <span class="toc-text">测试集用户点击日志</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B0%E9%97%BB%E6%96%87%E7%AB%A0%E4%BF%A1%E6%81%AF%E6%95%B0%E6%8D%AE%E8%A1%A8"><span class="toc-number">4.3.</span> <span class="toc-text">新闻文章信息数据表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B0%E9%97%BB%E6%96%87%E7%AB%A0embedding%E5%90%91%E9%87%8F%E8%A1%A8%E7%A4%BA"><span class="toc-number">4.4.</span> <span class="toc-text">新闻文章embedding向量表示</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90"><span class="toc-number">5.</span> <span class="toc-text">数据分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E9%87%8D%E5%A4%8D%E7%82%B9%E5%87%BB"><span class="toc-number">5.1.</span> <span class="toc-text">用户重复点击</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E7%82%B9%E5%87%BB%E7%8E%AF%E5%A2%83%E5%8F%98%E5%8C%96%E5%88%86%E6%9E%90"><span class="toc-number">5.2.</span> <span class="toc-text">用户点击环境变化分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E7%82%B9%E5%87%BB%E6%96%B0%E9%97%BB%E6%95%B0%E9%87%8F%E7%9A%84%E5%88%86%E5%B8%83"><span class="toc-number">5.3.</span> <span class="toc-text">用户点击新闻数量的分布</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B0%E9%97%BB%E7%82%B9%E5%87%BB%E6%AC%A1%E6%95%B0%E5%88%86%E6%9E%90"><span class="toc-number">5.4.</span> <span class="toc-text">新闻点击次数分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B0%E9%97%BB%E5%85%B1%E7%8E%B0%E9%A2%91%E6%AC%A1%EF%BC%9A%E4%B8%A4%E7%AF%87%E6%96%B0%E9%97%BB%E8%BF%9E%E7%BB%AD%E5%87%BA%E7%8E%B0%E7%9A%84%E6%AC%A1%E6%95%B0"><span class="toc-number">5.5.</span> <span class="toc-text">新闻共现频次：两篇新闻连续出现的次数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B0%E9%97%BB%E6%96%87%E7%AB%A0%E4%BF%A1%E6%81%AF"><span class="toc-number">5.6.</span> <span class="toc-text">新闻文章信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E7%82%B9%E5%87%BB%E7%9A%84%E6%96%B0%E9%97%BB%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%81%8F%E5%A5%BD"><span class="toc-number">5.7.</span> <span class="toc-text">用户点击的新闻类型的偏好</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E6%9F%A5%E7%9C%8B%E6%96%87%E7%AB%A0%E7%9A%84%E9%95%BF%E5%BA%A6%E7%9A%84%E5%88%86%E5%B8%83"><span class="toc-number">5.8.</span> <span class="toc-text">用户查看文章的长度的分布</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E7%82%B9%E5%87%BB%E6%96%B0%E9%97%BB%E7%9A%84%E6%97%B6%E9%97%B4%E5%88%86%E6%9E%90"><span class="toc-number">5.9.</span> <span class="toc-text">用户点击新闻的时间分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">6.</span> <span class="toc-text">总结</span></a></li></ol></div></div></div><div class="card-widget card-recent-post"><div class="card-content"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2020/12/02/%E5%A4%A9%E6%B1%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%85%A5%E9%97%A8%E8%B5%9B%E2%80%94%E2%80%94%E6%8E%92%E5%BA%8F%E6%A8%A1%E5%9E%8B+%E6%A8%A1%E5%9E%8B%E8%9E%8D%E5%90%88/" title="天池推荐系统入门赛——排序模型+模型融合"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="天池推荐系统入门赛——排序模型+模型融合"/></a><div class="content"><a class="title" href="/2020/12/02/%E5%A4%A9%E6%B1%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%85%A5%E9%97%A8%E8%B5%9B%E2%80%94%E2%80%94%E6%8E%92%E5%BA%8F%E6%A8%A1%E5%9E%8B+%E6%A8%A1%E5%9E%8B%E8%9E%8D%E5%90%88/" title="天池推荐系统入门赛——排序模型+模型融合">天池推荐系统入门赛——排序模型+模型融合</a><time datetime="2020-12-02T11:40:19.000Z" title="Created 2020-12-02 19:40:19">2020-12-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/12/02/%E5%A4%A9%E6%B1%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%85%A5%E9%97%A8%E8%B5%9B%E2%80%94%E2%80%94%E5%A4%9A%E8%B7%AF%E5%8F%AC%E5%9B%9E/" title="天池推荐系统入门赛——多路召回"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="天池推荐系统入门赛——多路召回"/></a><div class="content"><a class="title" href="/2020/12/02/%E5%A4%A9%E6%B1%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%85%A5%E9%97%A8%E8%B5%9B%E2%80%94%E2%80%94%E5%A4%9A%E8%B7%AF%E5%8F%AC%E5%9B%9E/" title="天池推荐系统入门赛——多路召回">天池推荐系统入门赛——多路召回</a><time datetime="2020-12-02T11:35:19.000Z" title="Created 2020-12-02 19:35:19">2020-12-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/12/02/%E5%A4%A9%E6%B1%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%85%A5%E9%97%A8%E8%B5%9B%E2%80%94%E2%80%94%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/" title="天池推荐系统入门赛——特征工程"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="天池推荐系统入门赛——特征工程"/></a><div class="content"><a class="title" href="/2020/12/02/%E5%A4%A9%E6%B1%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%85%A5%E9%97%A8%E8%B5%9B%E2%80%94%E2%80%94%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/" title="天池推荐系统入门赛——特征工程">天池推荐系统入门赛——特征工程</a><time datetime="2020-12-02T11:20:19.000Z" title="Created 2020-12-02 19:20:19">2020-12-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/12/02/%E5%A4%A9%E6%B1%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%85%A5%E9%97%A8%E8%B5%9B%E2%80%94%E2%80%94%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/" title="天池推荐系统入门赛——数据分析"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="天池推荐系统入门赛——数据分析"/></a><div class="content"><a class="title" href="/2020/12/02/%E5%A4%A9%E6%B1%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%85%A5%E9%97%A8%E8%B5%9B%E2%80%94%E2%80%94%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/" title="天池推荐系统入门赛——数据分析">天池推荐系统入门赛——数据分析</a><time datetime="2020-12-02T11:16:19.000Z" title="Created 2020-12-02 19:16:19">2020-12-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/12/02/%E5%A4%A9%E6%B1%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%85%A5%E9%97%A8%E8%B5%9B%E2%80%94%E2%80%94%E8%B5%9B%E9%A2%98%E7%90%86%E8%A7%A3+Baseline/" title="天池推荐系统入门赛——赛题理解+Baseline"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="天池推荐系统入门赛——赛题理解+Baseline"/></a><div class="content"><a class="title" href="/2020/12/02/%E5%A4%A9%E6%B1%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%85%A5%E9%97%A8%E8%B5%9B%E2%80%94%E2%80%94%E8%B5%9B%E9%A2%98%E7%90%86%E8%A7%A3+Baseline/" title="天池推荐系统入门赛——赛题理解+Baseline">天池推荐系统入门赛——赛题理解+Baseline</a><time datetime="2020-12-02T11:10:19.000Z" title="Created 2020-12-02 19:10:19">2020-12-02</time></div></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/6.jpg)"><div id="footer-wrap"><div class="copyright">&copy;2020 By Yanyu Chen</div><div class="footer_custom_text">Welcome to my blog~</div><div class="icp"><a><img class="icp-icon" src="/img/icp.png" alt="ICP"/><span></span></a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">Local search</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="Search for Posts" type="text"/></div></div></div><hr/><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>Powered by</span> <a target="_blank" rel="noopener" href="https://github.com/wzpan/hexo-generator-search" style="color:#49B1F5;">hexo-generator-search</a></div></div></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',()=> {preloader.endLoading()})</script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div></body></html>
